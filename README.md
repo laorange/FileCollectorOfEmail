@@ -41,6 +41,6 @@ pip install zmail
 
 下图为qq邮箱开启pop3服务的示意图：
 
-![pop3.png](README_image/pop3.png)
+![pop3.png](pop3.png)
 
 另外可参考该网页的内容：[网页链接](https://jingyan.baidu.com/article/7908e85cd945fcaf481ad2e4.html)
