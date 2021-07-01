@@ -33,6 +33,7 @@ if __name__ == '__main__':
             email_account = email_accounts[0]
             server = zmail.server(email_account[1], email_account[2])
             if server.smtp_able() and server.pop_able():
+                print('服务器连接成功！')
                 break
 
             print('服务器连接失败，原因：网络故障或邮箱地址与识别码不匹配')
@@ -53,8 +54,10 @@ if __name__ == '__main__':
         try:
             threshold_time = (datetime.datetime.now() - datetime.timedelta(hours=1)).replace(
                 tzinfo=pytz.timezone('Asia/Shanghai'))
+            print('\n\n正在获取邮件信息，这个过程可能需要几分钟，请稍后...')
+            before = datetime.datetime.now()
             mails = server.get_mails(start_time=threshold_time)
-            print('\n服务器连接成功')
+            print(f'邮件获取成功！用时：{(datetime.datetime.now() - before).seconds}秒')
 
             num = 0
             for mail in mails:
@@ -70,19 +73,19 @@ if __name__ == '__main__':
                     db.execute(sql2)
                     db.commit()
 
-                zmail.show(mail)
+                # zmail.show(mail)
                 if mail['Attachments']:
                     output_path = BASE_DIR / email_account[1]
                     if not os.path.exists(output_path):
                         os.mkdir(output_path)
                     zmail.save_attachment(mail, target_path=output_path.__str__(), overwrite=True)
-                    print(f'收到了来自{from_}的邮件，主题为{mail["Subject"]}，附件为{mail["Attachments"]}，已保存到本地')
+                    print(f'收到了来自{from_}的邮件，主题为{mail["Subject"]}，其附件已保存到本地')
                 else:
                     print(f'收到了来自{from_}的邮件，主题为{mail["Subject"]}，无附件')
             print(f'{datetime.datetime.now().strftime("%H:%M:%S")}:  本次查收了{num}封邮件')
 
             for step in range(T):
-                print(f'\r{datetime.datetime.now().strftime("%H:%M:%S")}:  距离下一次查收邮件还有 {T - step}秒')
+                print(f'\r{datetime.datetime.now().strftime("%H:%M:%S")}:  距离下一次查收邮件还有 {T - step}秒', end='')
                 sleep(1)
         except KeyboardInterrupt:
             break
